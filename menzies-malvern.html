@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en-US" prefix="og: http://ogp.me/ns#">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="images/favicon.ico" />
+    <title>The Menzies Malvern &#8211; Longreach</title>
+    <link type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link type="text/css" href="css/bootstrap.min.css" rel="stylesheet">
+    <link type="text/css" href="css/custom-style.css" rel="stylesheet">
+    <link type="text/css" href="css/custom-media.css" rel="stylesheet">
+    <style>
+        /* ---------------------------------------------------------------
+     Tweakables
+     --------------------------------------------------------------- */
+        :root {
+            /* Intrinsic size of menzies.png — change these if you swap the image */
+            --img-natural-w: 932;
+            --img-natural-h: 1163;
+
+            /* Oversize factor. 1.25 means the image is drawn 125% of the viewport
+       width, so exactly 80% of the picture's width is on screen at any
+       moment — that's what gives the 20% of horizontal travel. */
+            --oversize: 1.25;
+
+            /* How long the pan takes */
+            --duration: 25s;
+
+            /* Computed drawn size of the image (landscape / wide viewports) */
+            --img-w: calc(var(--oversize) * 100vw);
+            --img-h: calc(var(--oversize) * 100vw * var(--img-natural-h) / var(--img-natural-w));
+        }
+
+        /* On viewports narrower than the image's own aspect ratio (phones held
+     upright), sizing by width would leave the image too short to fill the
+     screen. Size by height instead — same aspect ratio, no distortion. */
+        @media (max-aspect-ratio: 932/1163) {
+            :root {
+                --img-h: calc(var(--oversize) * 100vh);
+                --img-w: calc(var(--oversize) * 100vh * var(--img-natural-w) / var(--img-natural-h));
+            }
+        }
+
+        /* ---------------------------------------------------------------
+     Stage
+     --------------------------------------------------------------- */
+        .stage {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            z-index: 99999;
+            cursor: pointer;
+            transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+        }
+
+        .stage.fade-out {
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+        }
+
+        .stage img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: var(--img-w);
+            height: var(--img-h);
+            display: block;
+            transform: translate3d(0, 0, 0);
+            /* start: top-left, showing left 80% */
+            will-change: transform;
+            animation: kenburns var(--duration) ease-in-out forwards;
+        }
+
+        /* Top-left  ->  bottom-right. The vertical distance is much larger than
+     the horizontal, so it reads as a downward pan with a diagonal drift. */
+        @keyframes kenburns {
+            from {
+                transform: translate3d(0, 0, 0);
+            }
+
+            to {
+                transform: translate3d(calc(100vw - var(--img-w)),
+                        calc(100vh - var(--img-h)),
+                        0);
+            }
+        }
+
+        /* To loop back and forth instead of stopping at the bottom, swap the
+     animation shorthand above for:
+         animation: kenburns var(--duration) ease-in-out infinite alternate;
+     ...and delete `forwards`. */
+
+        @media (prefers-reduced-motion: reduce) {
+            .stage img {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+
+<body class="no-scroll">
+
+    <div class="stage">
+        <img src="images/menzies.jpg" alt="Menzies" />
+    </div>
+    <div id="header"></div>
+
+    <div class="container">
+        <div class="page-content new-page-ui">
+            <div class="inner-content">
+                <div class="content-pic-area">
+                    <div class="property-slider swiper">
+                        <div class="swiper-wrapper">
+                            <div class="swiper-slide">
+                                <img src="images/menzies1.jpg" alt="Menzies" class="img-fluid">
+                            </div>
+                            <div class="swiper-slide">
+                                <img src="images/menzies2.jpg" alt="Menzies" class="img-fluid">
+                            </div>
+                            <div class="swiper-slide">
+                                <img src="images/menzies3.jpg" alt="Menzies" class="img-fluid">
+                            </div>
+                            <div class="swiper-slide">
+                                <img src="images/menzies4.jpg" alt="Menzies" class="img-fluid">
+                            </div>
+                            <div class="swiper-slide">
+                                <img src="images/menzies5.jpg" alt="Menzies" class="img-fluid">
+                            </div>
+                            <div class="swiper-slide">
+                                <img src="images/menzies6.jpg" alt="Menzies" class="img-fluid">
+                            </div>
+                        </div>
+
+                        <div class="property-slider-navigation">
+                            <button type="button" class="property-slider-prev">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </button>
+                            <button type="button" class="property-slider-next">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="page-info-right flex-column d-flex">
+                    <h3 class="bigsize">Menzies Malvern</h3>
+                    <div class="product-info pe-0">
+                        <p class="font-15px">Set on an 8,000sqm site at the corner of Glenferrie Road and High Street
+                            Malvern, we developed the Menzies apartments and adjoining
+                            medical centre. With interiors* by Carr Design the Menzies has established itself as one of
+                            Melbourne's pre-eminent retirement villages.
+                        </p>
+                        <ul class="line-ul-list first-list-border-top">
+                            <li>124 Apartments</li>
+                            <li>Joint venture partner: PwC</li>
+                            <li>Builder: Multiplex</li>
+                            <li>Funding: Commonwealth Bank</li>
+                            <li>Management rights: Sold to Lendlease Communities</li>
+                            <li>Address: 1306 High Street, Malvern</li>
+                        </ul>
+                    </div>
+                    <div class="note">* While the Menzies' exterior architecture bears some resemblance to the
+                        penitentiary in The Shawshank Redemption, we have been assured that any similarity is entirely
+                        coincidental, and no design copyright was infringed.</div>
+                </div>
+            </div>
+        </div>
+        <div class="page-bottom-section">
+            <h4>LONGREACH PRINCIPAL PTY LTD</h4>
+            <p>(ACN 655 320 344)</p>
+        </div>
+    </div>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>
