@@ -18,6 +18,23 @@
     <style>
         /* ---------------------------------------------------------------
      Tweakables
+
+     The cycle, in order:
+       bottom-right --(pan)--> top-left
+       hold 5s
+       top-left --(slide right)--> top-right
+       top-right --(pan)--> bottom-left
+       hold 5s
+       bottom-left --(slide right)--> bottom-right
+       ...and repeat, seamlessly.
+
+     Pans are 10s, holds 5s, slides 5s — 40s per full loop.
+
+     IMPORTANT: @keyframes percentages can't be calculated from variables,
+     so the timings below are baked into the percentages in the @keyframes
+     block. If you change --cycle you only change the overall speed; to
+     alter the *ratio* of pan / hold / slide you have to redo the
+     percentages too. The arithmetic is spelled out beside each one.
      --------------------------------------------------------------- */
         :root {
             /* Intrinsic size of menzies.png — change these if you swap the image */
@@ -29,12 +46,18 @@
        moment — that's what gives the 20% of horizontal travel. */
             --oversize: 1.25;
 
-            /* How long the pan takes */
-            --duration: 25s;
+            /* Total length of one full loop.
+       Built from: 10s pan + 5s hold + 5s slide + 10s pan + 5s hold + 5s slide */
+            --cycle: 40s;
 
             /* Computed drawn size of the image (landscape / wide viewports) */
             --img-w: calc(var(--oversize) * 100vw);
             --img-h: calc(var(--oversize) * 100vw * var(--img-natural-h) / var(--img-natural-w));
+
+            /* Offsets that pin the image's right / bottom edge to the viewport edge.
+       Both resolve to negative numbers. */
+            --to-x: calc(100vw - var(--img-w));
+            --to-y: calc(100vh - var(--img-h));
         }
 
         /* On viewports narrower than the image's own aspect ratio (phones held
@@ -50,19 +73,13 @@
         /* ---------------------------------------------------------------
      Stage
      --------------------------------------------------------------- */
+
         .stage {
             position: fixed;
             inset: 0;
             overflow: hidden;
             z-index: 99999;
             cursor: pointer;
-            transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
-        }
-
-        .stage.fade-out {
-            opacity: 0 !important;
-            visibility: hidden !important;
-            pointer-events: none !important;
         }
 
         .stage img {
@@ -72,30 +89,49 @@
             width: var(--img-w);
             height: var(--img-h);
             display: block;
-            transform: translate3d(0, 0, 0);
-            /* start: top-left, showing left 80% */
+            /* start: bottom-right, showing the right-hand 80% */
+            transform: translate3d(var(--to-x), var(--to-y), 0);
             will-change: transform;
-            animation: kenburns var(--duration) ease-in-out forwards;
+            animation: kenburns var(--cycle) ease-in-out infinite;
         }
 
-        /* Top-left  ->  bottom-right. The vertical distance is much larger than
-     the horizontal, so it reads as a downward pan with a diagonal drift. */
         @keyframes kenburns {
-            from {
+
+            /* 0s — bottom-right */
+            0% {
+                transform: translate3d(var(--to-x), var(--to-y), 0);
+            }
+
+            /* 10s — top-left (10/40) */
+            25% {
                 transform: translate3d(0, 0, 0);
             }
 
-            to {
-                transform: translate3d(calc(100vw - var(--img-w)),
-                        calc(100vh - var(--img-h)),
-                        0);
+            /* 15s — hold at top-left for 5s (15/40) */
+            37.5% {
+                transform: translate3d(0, 0, 0);
+            }
+
+            /* 20s — slid right to top-right (20/40) */
+            50% {
+                transform: translate3d(var(--to-x), 0, 0);
+            }
+
+            /* 30s — panned down to bottom-left (30/40) */
+            75% {
+                transform: translate3d(0, var(--to-y), 0);
+            }
+
+            /* 35s — hold at bottom-left for 5s (35/40) */
+            87.5% {
+                transform: translate3d(0, var(--to-y), 0);
+            }
+
+            /* 40s — slid right to bottom-right, matching 0% so the loop is seamless */
+            100% {
+                transform: translate3d(var(--to-x), var(--to-y), 0);
             }
         }
-
-        /* To loop back and forth instead of stopping at the bottom, swap the
-     animation shorthand above for:
-         animation: kenburns var(--duration) ease-in-out infinite alternate;
-     ...and delete `forwards`. */
 
         @media (prefers-reduced-motion: reduce) {
             .stage img {

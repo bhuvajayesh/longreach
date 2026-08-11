@@ -129,35 +129,19 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Victoria Point Splash Sequence (Auto Slide Loop)
+  // Victoria Point Splash Sequence
   const vpSplash1 = document.getElementById("vp-splash-1");
   const vpSplash2 = document.getElementById("vp-splash-2");
   
   if (vpSplash1 && vpSplash2) {
-    let currentSplash = 1;
-    let splashInterval = setInterval(() => {
-      if (currentSplash === 1) {
-        vpSplash1.classList.add("fade-out");
-        vpSplash2.classList.remove("fade-out"); // bring 2 to front visually
-        currentSplash = 2;
-      } else {
-        vpSplash2.classList.add("fade-out");
-        vpSplash1.classList.remove("fade-out"); // bring 1 to front visually
-        currentSplash = 1;
-      }
-    }, 4000); // Auto slide every 4 seconds
-    
     // Click on Splash 1 -> go to Splash 2
     vpSplash1.addEventListener("click", function () {
-      clearInterval(splashInterval); // Stop auto loop
       vpSplash1.classList.add("fade-out");
       vpSplash2.classList.remove("fade-out"); // ensure it's visible
-      currentSplash = 2;
     });
 
     // Click on Splash 2 -> enter the page
     vpSplash2.addEventListener("click", function () {
-      clearInterval(splashInterval); // Stop auto loop
       vpSplash1.classList.add("fade-out");
       vpSplash2.classList.add("fade-out");
       document.body.classList.remove("no-scroll");
@@ -206,11 +190,11 @@ document.addEventListener("DOMContentLoaded", function () {
         crossFade: true,
       },
 
-      autoplay: {
-        delay: 3000,
-        disableOnInteraction: false,
-        pauseOnMouseEnter: true,
-      },
+      // autoplay: {
+      //   delay: 3000,
+      //   disableOnInteraction: false,
+      //   pauseOnMouseEnter: true,
+      // },
 
       navigation: {
         nextEl: slider.querySelector(".property-slider-next"),
