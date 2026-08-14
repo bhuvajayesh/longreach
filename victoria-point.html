@@ -47,14 +47,8 @@
         <div class="page-content new-page-ui">
             <div class="inner-content">
                 <div class="content-pic-area">
-                    <div class="property-slider swiper">
+                    <div class="property-slider swiper reload-on-last">
                         <div class="swiper-wrapper">
-                            <div class="swiper-slide">
-                                <img src="images/new/victoria-point-full-01.jpg" alt="Victoria Point" class="img-fluid">
-                            </div>
-                            <div class="swiper-slide">
-                                <img src="images/new/victoria-point-full-02.jpg" alt="Victoria Point" class="img-fluid">
-                            </div>
                             <div class="swiper-slide">
                                 <img src="images/new/victoria-point-01.jpg" alt="Victoria Point" class="img-fluid">
                             </div>
@@ -70,7 +64,7 @@
                             <button type="button" class="property-slider-prev">
                                 <i class="fa-solid fa-chevron-left"></i>
                             </button>
-                            <button type="button" class="property-slider-next">
+                            <button type="button" class="property-slider-next reload-on-last">
                                 <i class="fa-solid fa-chevron-right"></i>
                             </button>
                         </div>
@@ -108,6 +102,27 @@
     <script src="js/bootstrap.min.js"></script>
     <script src="js/bootstrap.bundle.min.js"></script>
     <script src="js/main.js"></script>
+    <script>
+        // Reload on last slide logic
+        document.addEventListener("DOMContentLoaded", function () {
+            const slider = document.querySelector(".reload-on-last");
+            if (!slider) return;
+
+            const nextBtn = slider.querySelector(".property-slider-next");
+
+            nextBtn.addEventListener("click", function () {
+                const swiper = slider.swiper;
+                if (!swiper) return;
+
+                // 3 original slides = index 0,1,2
+                if (swiper.realIndex === 2) {
+                    setTimeout(() => {
+                        location.reload();
+                    }, 100);
+                }
+            }, true);
+        });
+    </script>
 </body>
 
 </html>
