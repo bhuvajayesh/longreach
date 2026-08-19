@@ -132,7 +132,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Victoria Point Splash Sequence
   const vpSplash1 = document.getElementById("vp-splash-1");
   const vpSplash2 = document.getElementById("vp-splash-2");
-  
+
   if (vpSplash1 && vpSplash2) {
     // Click on Splash 1 -> go to Splash 2
     vpSplash1.addEventListener("click", function () {
@@ -145,10 +145,10 @@ document.addEventListener("DOMContentLoaded", function () {
       vpSplash1.classList.add("fade-out");
       vpSplash2.classList.add("fade-out");
       document.body.classList.remove("no-scroll");
-      
+
       setTimeout(() => {
-        vpSplash1.style.display = 'none';
-        vpSplash2.style.display = 'none';
+        vpSplash1.style.display = "none";
+        vpSplash2.style.display = "none";
       }, 500);
     });
   }
@@ -179,7 +179,7 @@ window.addEventListener("load", function () {
 document.addEventListener("DOMContentLoaded", function () {
   const sliders = document.querySelectorAll(".property-slider");
   sliders.forEach((slider) => {
-    new Swiper(slider, {
+    const swiper = new Swiper(slider, {
       slidesPerView: 1,
       spaceBetween: 0,
       speed: 1500,
@@ -201,6 +201,53 @@ document.addEventListener("DOMContentLoaded", function () {
         prevEl: slider.querySelector(".property-slider-prev"),
       },
     });
+
+    const nextBtn = slider.querySelector(".property-slider-next");
+    const totalRealSlides = slider.querySelectorAll(
+      ".swiper-slide:not(.swiper-slide-duplicate)",
+    ).length;
+
+    if (nextBtn) {
+      nextBtn.addEventListener(
+        "click",
+        function (e) {
+          if (swiper.realIndex === totalRealSlides - 1) {
+            // Smoothly reset the page state instead of a hard reload
+            const vpSplash1 = document.getElementById("vp-splash-1");
+            const vpSplash2 = document.getElementById("vp-splash-2");
+
+            if (vpSplash1 && vpSplash2) {
+              // Revert display properties
+              vpSplash1.style.display = "block";
+              vpSplash2.style.display = "block";
+
+              // Ensure they start faded out before the transition
+              vpSplash1.classList.add("fade-out");
+              vpSplash2.classList.add("fade-out");
+
+              // Force DOM reflow so the browser registers display block
+              void vpSplash1.offsetWidth;
+
+              // Fade in the first splash screen
+              // Smooth fade in
+              requestAnimationFrame(() => {
+                vpSplash1.classList.remove("fade-out");
+              });
+
+              // Reset body scroll and scroll to top
+              // Scroll to top first
+              window.scrollTo({ top: 0, behavior: "instant" });
+              document.body.classList.add("no-scroll");
+              window.scrollTo(0, 0);
+            } else {
+              // Fallback
+              window.location.reload();
+            }
+          }
+        },
+        true,
+      ); // capture phase to check before Swiper updates the slide
+    }
   });
 });
 
