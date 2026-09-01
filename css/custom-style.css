@@ -60,6 +60,8 @@
   --color-body: #f4f4f1;
   --color-light: #ffffff;
   --color-border-dark: #3c3c3c;
+  --page-transition-duration: 1.5s;
+  --page-transition-easing: ease-in-out;
 }
 
 * {
@@ -159,6 +161,7 @@ ul {
 
 body.page-ready {
   visibility: visible;
+  animation: pageLoadFadeIn 1.5s ease-in-out forwards;
 }
 
 .container {
@@ -561,9 +564,11 @@ body.no-scroll {
   z-index: 99999;
   background: url('../images/main-hero-image.jpg') no-repeat center center;
   background-size: cover;
-  transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+  transition:
+    opacity var(--page-transition-duration) var(--page-transition-easing),
+    visibility var(--page-transition-duration) var(--page-transition-easing);
   cursor: pointer;
-  animation: pageLoadFadeIn 2s ease-in-out forwards;
+  animation: pageLoadFadeIn var(--page-transition-duration) var(--page-transition-easing) forwards;
 }
 
 #splash-screen.fade-out {
@@ -611,11 +616,17 @@ body.no-scroll {
 
 /* Victoria Point Splash Screens */
 @keyframes pageLoadFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
-.vp-splash, .stage {
+.vp-splash,
+.stage {
   position: fixed;
   top: 0;
   left: 0;
@@ -624,11 +635,13 @@ body.no-scroll {
   z-index: 99999;
   background-size: cover;
   background-position: center;
-  transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+  transition:
+    opacity var(--page-transition-duration) var(--page-transition-easing),
+    visibility var(--page-transition-duration) var(--page-transition-easing);
   cursor: pointer;
   opacity: 1;
   visibility: visible;
-  animation: pageLoadFadeIn 2s ease-in-out forwards;
+  animation: pageLoadFadeIn var(--page-transition-duration) var(--page-transition-easing) forwards;
 }
 
 #vp-splash-1 {
@@ -688,15 +701,18 @@ body.no-scroll {
   height: 220px;
 }
 
-.vp-splash.fade-out, .stage.fade-out {
+.vp-splash.fade-out,
+.stage.fade-out {
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
 }
 
-.vp-splash.fade-in, .stage.fade-in {
+.vp-splash.fade-in,
+.stage.fade-in {
   opacity: 1 !important;
   visibility: visible !important;
+  pointer-events: auto !important;
 }
 
 .custom-tabs .nav-tabs .nav-item {

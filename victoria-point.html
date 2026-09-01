@@ -102,27 +102,6 @@
     <script src="js/bootstrap.min.js"></script>
     <script src="js/bootstrap.bundle.min.js"></script>
     <script src="js/main.js"></script>
-    <script>
-        // Reload on last slide logic
-        document.addEventListener("DOMContentLoaded", function () {
-            const slider = document.querySelector(".reload-on-last");
-            if (!slider) return;
-
-            const nextBtn = slider.querySelector(".property-slider-next");
-
-            nextBtn.addEventListener("click", function () {
-                const swiper = slider.swiper;
-                if (!swiper) return;
-
-                // 3 original slides = index 0,1,2
-                if (swiper.realIndex === 2) {
-                    setTimeout(() => {
-                        location.reload();
-                    }, 100);
-                }
-            }, true);
-        });
-    </script>
 </body>
 
 </html>

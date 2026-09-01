@@ -1,3 +1,5 @@
+const PAGE_TRANSITION_DURATION = 1500;
+
 // Header include
 function updateActiveHashLink(clickedLink) {
   const anchorLinks = document.querySelectorAll('a[href^="#"]');
@@ -112,6 +114,41 @@ $(function () {
   });
 });
 
+function hideSplashScreen(element) {
+  if (!element) return;
+
+  element.classList.add("fade-out");
+  document.body.classList.remove("no-scroll");
+
+  window.setTimeout(() => {
+    element.style.display = "none";
+  }, PAGE_TRANSITION_DURATION);
+}
+
+function resetVictoriaPointSplashSequence() {
+  const vpSplash1 = document.getElementById("vp-splash-1");
+  const vpSplash2 = document.getElementById("vp-splash-2");
+
+  if (!vpSplash1 || !vpSplash2) return;
+
+  // Prepare opening splash
+  vpSplash1.style.display = "block";
+  vpSplash2.style.display = "none";
+
+  // Start opening splash completely transparent
+  vpSplash1.classList.add("fade-out");
+
+  document.body.classList.add("no-scroll");
+
+  // Force browser to apply the hidden state first
+  void vpSplash1.offsetWidth;
+
+  // Then fade in smoothly at the same speed as the opening animation
+  requestAnimationFrame(() => {
+    vpSplash1.classList.remove("fade-out");
+  });
+}
+
 // Splash Screen Logic
 document.addEventListener("DOMContentLoaded", function () {
   addSmoothScrollListeners();
@@ -122,10 +159,9 @@ document.addEventListener("DOMContentLoaded", function () {
       splashScreen.classList.add("fade-out");
       document.body.classList.remove("overflow-hidden");
 
-      // Optionally remove element from DOM after transition
       setTimeout(() => {
         splashScreen.style.display = "none";
-      }, 500); // matches transition time in CSS
+      }, PAGE_TRANSITION_DURATION);
     });
   }
 
@@ -134,22 +170,22 @@ document.addEventListener("DOMContentLoaded", function () {
   const vpSplash2 = document.getElementById("vp-splash-2");
 
   if (vpSplash1 && vpSplash2) {
-    // Click on Splash 1 -> go to Splash 2
     vpSplash1.addEventListener("click", function () {
+      vpSplash2.style.display = "block";
+      vpSplash2.classList.add("fade-out");
+
+      void vpSplash2.offsetWidth;
+
       vpSplash1.classList.add("fade-out");
-      vpSplash2.classList.remove("fade-out"); // ensure it's visible
+
+      requestAnimationFrame(() => {
+        vpSplash2.classList.remove("fade-out");
+      });
     });
 
-    // Click on Splash 2 -> enter the page
     vpSplash2.addEventListener("click", function () {
-      vpSplash1.classList.add("fade-out");
-      vpSplash2.classList.add("fade-out");
-      document.body.classList.remove("no-scroll");
-
-      setTimeout(() => {
-        vpSplash1.style.display = "none";
-        vpSplash2.style.display = "none";
-      }, 500);
+      hideSplashScreen(vpSplash1);
+      hideSplashScreen(vpSplash2);
     });
   }
 
@@ -157,11 +193,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const mmSplashScreen = document.querySelector(".stage");
   if (mmSplashScreen) {
     mmSplashScreen.addEventListener("click", function () {
-      mmSplashScreen.classList.add("fade-out");
-      document.body.classList.remove("no-scroll");
-      setTimeout(() => {
-        mmSplashScreen.style.display = "none";
-      }, 500);
+      hideSplashScreen(mmSplashScreen);
     });
   }
 });
@@ -178,7 +210,11 @@ window.addEventListener("load", function () {
 // Slider
 document.addEventListener("DOMContentLoaded", function () {
   const sliders = document.querySelectorAll(".property-slider");
+
   sliders.forEach((slider) => {
+    const nextBtn = slider.querySelector(".property-slider-next");
+    const prevBtn = slider.querySelector(".property-slider-prev");
+
     const swiper = new Swiper(slider, {
       slidesPerView: 1,
       spaceBetween: 0,
@@ -190,63 +226,39 @@ document.addEventListener("DOMContentLoaded", function () {
         crossFade: true,
       },
 
-      // autoplay: {
-      //   delay: 3000,
-      //   disableOnInteraction: false,
-      //   pauseOnMouseEnter: true,
-      // },
-
       navigation: {
-        nextEl: slider.querySelector(".property-slider-next"),
-        prevEl: slider.querySelector(".property-slider-prev"),
+        nextEl: nextBtn,
+        prevEl: prevBtn,
       },
     });
 
-    const nextBtn = slider.querySelector(".property-slider-next");
-    const totalRealSlides = slider.querySelectorAll(
-      ".swiper-slide:not(.swiper-slide-duplicate)",
-    ).length;
+    // if (slider.classList.contains("reload-on-last")) {
+    //   swiper.on("reachEnd", function () {
+    //     setTimeout(() => {
+    //       resetVictoriaPointSplashSequence();
+    //     }, 120);
+    //   });
+    // }
 
-    if (nextBtn) {
+    if (nextBtn && slider.classList.contains("reload-on-last")) {
       nextBtn.addEventListener(
         "click",
-        function (e) {
+        function () {
+          const totalRealSlides = slider.querySelectorAll(
+            ".swiper-slide:not(.swiper-slide-duplicate)",
+          ).length;
+
           if (swiper.realIndex === totalRealSlides - 1) {
-            // Smoothly reset the page state instead of a hard reload
             const vpSplash1 = document.getElementById("vp-splash-1");
             const vpSplash2 = document.getElementById("vp-splash-2");
 
             if (vpSplash1 && vpSplash2) {
-              // Revert display properties
-              vpSplash1.style.display = "block";
-              vpSplash2.style.display = "block";
-
-              // Ensure they start faded out before the transition
-              vpSplash1.classList.add("fade-out");
-              vpSplash2.classList.add("fade-out");
-
-              // Force DOM reflow so the browser registers display block
-              void vpSplash1.offsetWidth;
-
-              // Fade in the first splash screen
-              // Smooth fade in
-              requestAnimationFrame(() => {
-                vpSplash1.classList.remove("fade-out");
-              });
-
-              // Reset body scroll and scroll to top
-              // Scroll to top first
-              window.scrollTo({ top: 0, behavior: "instant" });
-              document.body.classList.add("no-scroll");
-              window.scrollTo(0, 0);
-            } else {
-              // Fallback
-              window.location.reload();
+              resetVictoriaPointSplashSequence();
             }
           }
         },
         true,
-      ); // capture phase to check before Swiper updates the slide
+      );
     }
   });
 });
